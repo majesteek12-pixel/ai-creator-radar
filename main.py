@@ -7,7 +7,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 
 from app.search import search_opportunities
 from app.messages import format_opportunities, welcome_message, help_message
-
+ALLOWED_USER_ID = 297309691
 load_dotenv()
 
 logging.basicConfig(
@@ -19,6 +19,10 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.effective_user.id != ALLOWED_USER_ID:
+        await update.message.reply_text("⛔ Доступ запрещён")
+        return
+
     await update.message.reply_text(welcome_message(), parse_mode="Markdown")
 
 
