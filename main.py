@@ -81,7 +81,7 @@ def main() -> None:
         raise RuntimeError("TELEGRAM_BOT_TOKEN is not set. Add it to .env or Render Environment Variables.")
 
     app = Application.builder().token(BOT_TOKEN).build()
-
+    app.add_handler(MessageHandler(filters.COMMAND & ~filters.User(user_id=ALLOWED_USER_ID), deny_access), group=0)
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_cmd))
     app.add_handler(CommandHandler("jobs", jobs))
