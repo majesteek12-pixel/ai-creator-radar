@@ -4,8 +4,9 @@ import asyncio
 from flask import Flask
 from threading import Thread
 from dotenv import load_dotenv
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import Update 
+from telegram.ext import TypeHandler, ApplicationHandlerStop
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 from app.search import search_opportunities
 from app.messages import format_opportunities, welcome_message, help_message
@@ -27,20 +28,20 @@ logging.basicConfig(
 )
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+async def deny_access(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("⛔ Доступ запрещён")
+    raise ApplicationHandlerStop
+
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.effective_user.id != ALLOWED_USER_ID:
-        await update.message.reply_text("⛔ Доступ запрещён")
-        return
+   
 
     await update.message.reply_text(welcome_message(), parse_mode="Markdown")
 
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.effective_user.id != ALLOWED_USER_ID:
-        await update.message.reply_text("⛔ Доступ запрещён")
-        return
+   
 
     await update.message.reply_text(help_message(), parse_mode="Markdown")
 
@@ -89,7 +90,7 @@ def main() -> None:
     app.add_handler(CommandHandler("cartoons", cartoons))
     app.add_handler(CommandHandler("grants", grants))
     app.add_handler(CommandHandler("top", top))
-
+    app.add_handler(MessageHandler(filters.COMMAND & ~filters.User(user_id=ALLOWED_USER_ID), deny_access), group=0)
     logging.info("AI Creator Radar bot started.")
 
     loop = asyncio.new_event_loop()
