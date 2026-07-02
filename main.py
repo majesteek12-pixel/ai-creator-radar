@@ -38,6 +38,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.effective_user.id != ALLOWED_USER_ID:
+        await update.message.reply_text("⛔ Доступ запрещён")
+        return
+
     await update.message.reply_text(help_message(), parse_mode="Markdown")
 
 
