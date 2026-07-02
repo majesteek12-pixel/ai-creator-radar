@@ -72,11 +72,13 @@ def main() -> None:
     app.add_handler(CommandHandler("top", top))
 
     logging.info("AI Creator Radar bot started.")
-   loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-    
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
     app.run_polling()
 
 
 if __name__ == "__main__":
     main()
+    
