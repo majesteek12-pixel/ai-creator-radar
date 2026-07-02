@@ -1,6 +1,8 @@
 import os
 import logging
 import asyncio
+from flask import Flask
+from threading import Thread
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -8,6 +10,15 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 from app.search import search_opportunities
 from app.messages import format_opportunities, welcome_message, help_message
 ALLOWED_USER_ID = 297309691
+web_app = Flask(__name__)
+
+@web_app.route("/")
+def home():
+    return "AI Creator Radar is running"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    web_app.run(host="0.0.0.0", port=port)
 load_dotenv()
 
 logging.basicConfig(
@@ -79,7 +90,7 @@ def main() -> None:
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-
+    Thread(target=run_web, daemon=True).start()
     app.run_polling()
 
 
