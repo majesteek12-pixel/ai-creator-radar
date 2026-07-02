@@ -1,5 +1,6 @@
 import os
 import logging
+import asyncio
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -71,6 +72,9 @@ def main() -> None:
     app.add_handler(CommandHandler("top", top))
 
     logging.info("AI Creator Radar bot started.")
+   loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+    
     app.run_polling()
 
 
